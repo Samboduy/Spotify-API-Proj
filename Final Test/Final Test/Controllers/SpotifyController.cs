@@ -5,7 +5,7 @@ using Final_Test.Services;
 namespace Final_Test.Controllers;
 
 [ApiController]
-[Route("spotify/api")]
+[Route("spotify/")]
 public class SpotifyController : Controller
 {
      private IConfiguration _config;
@@ -27,23 +27,24 @@ public class SpotifyController : Controller
     [HttpGet("login")]
     public IActionResult Login()
     {
-        var redirectUri = _redirectUri;
+        _redirectUri = _config["Spotify:RedirectUri"];
+        _clientId = _config["Spotify:ClientId"];
         string state = StringExtension.RandomString(16);
         _state = state;
         var scopes = "user-read-private user-read-email";
 
         var url = $"https://accounts.spotify.com/authorize?client_id={_clientId}" +
-                  $"&response_type=code&redirect_uri={Uri.EscapeDataString(redirectUri)}" +
+                  $"&response_type=code&redirect_uri={Uri.EscapeDataString(_redirectUri)}" +
                   $"&scope={Uri.EscapeDataString(scopes)}"
                   + $"&state={Uri.EscapeDataString(state)}";
         return Redirect(url);
     }
     
     [HttpGet("/spotify")]
-    public Task<IActionResult> Callback([FromQuery] string code,[FromQuery] string state)
+    public IActionResult Callback([FromQuery] string code,[FromQuery] string state)
     {
         _spotifyService.Callback(code,state);
-        return Task.FromResult<IActionResult>(Ok());
+        return Ok();
     }
     
     [HttpGet("ping")]

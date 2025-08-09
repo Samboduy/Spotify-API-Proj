@@ -7,12 +7,7 @@ namespace Final_Test.Services;
 
 public class SpotifyService
 {
-    public string Login()
-    {
-        
-        return url;
-    }
-
+    
     public void Callback( string code,string state)
     {
         Console.WriteLine(code + " state:" + state);
